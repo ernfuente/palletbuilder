@@ -1,8 +1,9 @@
 "use client"
 
-import React, { useRef, useEffect } from "react"
+import React, { useRef, useEffect, useState } from "react"
 import * as THREE from "three"
 import type { Object3DEventMap, PerspectiveCamera } from "three"
+import { Package } from "react-feather"
 
 /* ---------- Types ---------- */
 interface BoxType {
@@ -976,11 +977,26 @@ export default function ThreeDVisualization({
   currentLayer,
   isThumbnail = false,
   static3D = false, // 👈 NEW
-}: Props & { static3D?: boolean }) {
+}: Props) {
   const mountRef = useRef<HTMLDivElement>(null)
-  const rendererRef = useRef<any>(null) // SceneRenderer | StillRenderer
+  const rendererRef = useRef<SceneRenderer | StillRenderer | null>(null)
   const contentRef = useRef<THREE.Group | null>(null)
   const dimsRef = useRef<THREE.Group | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    try {
+      if (isThumbnail) return // handled below
+      const el = mountRef.current
+      if (!el) return
+      rendererRef.current?.dispose?.()
+      rendererRef.current = new SceneRenderer(el)
+      return () => rendererRef.current?.dispose?.()
+    } catch (err) {
+      console.error("Failed to initialize 3D renderer:", err)
+      setError("Failed to initialize 3D visualization")
+    }
+  }, [isThumbnail])
 
   // --- Tiny, single-frame renderer for 3D thumbnails (no controls) ---
   class StillRenderer {
@@ -1176,12 +1192,13 @@ export default function ThreeDVisualization({
     r.invalidate()
   }, [calculation, palletConfig, viewMode, currentLayer, isThumbnail, static3D])
 
-  // ---- Render roots ----
-  if (isThumbnail && !static3D) {
-    // keep your old fast 2D fallback if you ever want it
+  if (error) {
     return (
-      <div className="w-full h-full min-h-0">
-        <ThumbnailVisualization calculation={calculation} palletConfig={palletConfig} />
+      <div className="w-full h-full min-h-[250px] bg-gray-100 rounded-lg flex items-center justify-center text-gray-500">
+        <div className="text-center">
+          <Package className="w-8 h-8 mx-auto mb-2 opacity-50" />
+          <p className="text-sm">3D Preview Unavailable</p>
+        </div>
       </div>
     )
   }
