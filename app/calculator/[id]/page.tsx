@@ -58,7 +58,7 @@ import {
 } from "@/lib/calculation-worker"
 
 // Dynamic imports for better performance
-const ThreeDVisualization = dynamic(() => import("../../../components/ThreeDVisualization"), {
+const ThreeDVisualization = dynamic(() => import("@/components/ThreeDVisualization"), {
   ssr: false,
   loading: () => (
     <div className="w-full h-[600px] bg-gray-50 rounded-lg flex items-center justify-center">
