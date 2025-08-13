@@ -2,8 +2,6 @@
 
 import React, { useRef, useEffect } from "react"
 import * as THREE from "three"
-import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js"
-import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js"
 import type { Object3DEventMap, PerspectiveCamera } from "three"
 
 /* ---------- Types ---------- */
@@ -442,10 +440,10 @@ class SceneRenderer {
     this.renderer.toneMappingExposure = 0.62
     this.renderer.shadowMap.enabled = false
 
-    const pmrem = new THREE.PMREMGenerator(this.renderer)
-    const env = new RoomEnvironment()
-    const envRT = pmrem.fromScene(env, 0.04)
-    this.scene.environment = envRT.texture
+    // const pmrem = new THREE.PMREMGenerator(this.renderer)
+    // const env = new RoomEnvironment()
+    // const envRT = pmrem.fromScene(env, 0.04)
+    // this.scene.environment = envRT.texture
 
     el.appendChild(this.renderer.domElement)
 
@@ -811,7 +809,7 @@ function makeTapeAutosizer(camera: THREE.PerspectiveCamera, baseSize: number) {
 
 /* ---------- Shared unit geometry + box geometry cache (slightly higher detail) ---------- */
 const UNIT_BOX = new THREE.BoxGeometry(1, 1, 1)
-const boxGeoCache = new Map<string, RoundedBoxGeometry>()
+const boxGeoCache = new Map<string, any>()
 function getRoundedBox(w: number, h: number, d: number) {
   const r = (n: number) => Math.round(n * 1000) / 1000
   const minDim = Math.max(0.001, Math.min(w, h, d))
@@ -821,7 +819,7 @@ function getRoundedBox(w: number, h: number, d: number) {
   const key = `${r(w)}x${r(h)}x${r(d)}@${r(radius)}`
   let geo = boxGeoCache.get(key)
   if (!geo) {
-    geo = new RoundedBoxGeometry(w, h, d, 3, radius) // segments 3 (sharper than 2, still reasonable)
+    geo = new THREE.BoxGeometry(w, h, d) // Using BoxGeometry instead of RoundedBoxGeometry
     boxGeoCache.set(key, geo)
   }
   return geo
@@ -1011,10 +1009,10 @@ export default function ThreeDVisualization({
       this.renderer.shadowMap.enabled = false
       this.scene.background = new THREE.Color("#F7F8FA")
 
-      const pmrem = new THREE.PMREMGenerator(this.renderer)
-      const env = new RoomEnvironment()
-      const envRT = pmrem.fromScene(env, 0.04)
-      this.scene.environment = envRT.texture
+      // const pmrem = new THREE.PMREMGenerator(this.renderer)
+      // const env = new RoomEnvironment()
+      // const envRT = pmrem.fromScene(env, 0.04)
+      // this.scene.environment = envRT.texture
 
       // simple three-point-ish lighting
       this.scene.add(new THREE.AmbientLight(0xffffff, 0.18))
