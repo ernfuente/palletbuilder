@@ -444,6 +444,18 @@ export default function PalletCalculatorPage() {
     setCurrentLayer(0)
   }, [currentPallet, viewMode])
 
+  useEffect(() => {
+    if (isMounted && (!referenceId || referenceId.trim() === "")) {
+      toast({
+        title: "Invalid Reference",
+        description: "No reference ID provided. Redirecting to home page.",
+        variant: "destructive",
+      })
+      router.push("/")
+      return
+    }
+  }, [referenceId, isMounted, router, toast])
+
   // Validation Results - moved up before useEffect that uses isFormValid
   const box = boxes[0]
   const isCustomPallet = palletConfig.type === "custom"
