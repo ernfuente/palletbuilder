@@ -23,7 +23,7 @@ import { useToast } from "@/hooks/use-toast"
 import { storage } from "@/lib/storage"
 import dynamic from "next/dynamic"
 
-const ThreeDVisualization = dynamic(() => import("../components/ThreeDVisualization"), {
+const ThreeDVisualization = dynamic(() => import("@/components/ThreeDVisualization"), {
   ssr: false,
   loading: () => (
     <div className="w-full h-[260px] bg-gray-100 rounded-lg flex items-center justify-center text-gray-500">
